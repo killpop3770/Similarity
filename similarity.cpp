@@ -7,12 +7,14 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
 
 using namespace cv;
 
-int thresholdImg = 50;
+typedef std::pair<std::string, std::string> Item;
 
 void similarity(std::string str1, std::string str2);
+int thresholdImg = 50;
 
 int main(int argc, char* argv[])
 {
@@ -24,31 +26,17 @@ int main(int argc, char* argv[])
 
     thresholdImg = stoi(names.at(0));
 
-    std::vector<std::string> v;
-    for(int i=1; i<names.size(); i++)
-    {
-        for(int j=1; j<names.size(); j++)
-        {
-            std::string tmp = "";
-            std::string tmp2 = "";
-            
-            tmp = names.at(i);
-            tmp += names.at(j);
+    std::vector<Item> result;
+	for (size_t i = 0; i < names.size(); ++i) {
+		for (size_t j = i + 1; j < names.size(); ++j) {
+			Item item(names.at(i), names.at(j));
+			result.push_back(item);
+		}
+	}
 
-            tmp2 = names.at(j);
-            tmp2 += names.at(i);
-
-            if((names.at(i).compare(names.at(j))) &&
-                !( find( v.begin(), v.end(), tmp) != v.end()) &&
-                !( find( v.begin(), v.end(), tmp2) != v.end()) )
-            {
-                similarity(names.at(i), names.at(j));
-
-                v.push_back(tmp);
-                v.push_back(tmp2);
-            }
-        }
-    }
+    for (const auto &item : result) {
+		similarity(item.first, item.second);
+	}
 
   return 0;
 }
